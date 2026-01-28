@@ -3,7 +3,8 @@
 Ce projet sert d'exemple pour expliquer le fonctionnement d'un Makefile. Il s'agit d'un petit jeu nommé "monjeu" compilé en C++.
 
 ## Structure du Makefile
-<!-- 
+
+<!--
 Le Makefile de ce projet est conçu pour compiler un jeu simple en C++ avec les fichiers suivants:
 - `src/main.cpp`
 - `src/Character.cpp`
@@ -124,11 +125,13 @@ Les bibliothèques statiques SFML pour Windows sont déjà incluses dans le proj
 1. **Télécharger SFML 3.0.2** depuis [https://www.sfml-dev.org/download.php](https://www.sfml-dev.org/download.php)
 
 2. **Installer les dépendances** (dans MSYS2):
+
    ```bash
    pacman -S mingw-w64-x86_64-cmake mingw-w64-x86_64-ninja
    ```
 
 3. **Compiler SFML en mode statique**:
+
    ```bash
    cd /chemin/vers/SFML-3.0.2
    cmake -S . -B build-static \
@@ -137,11 +140,12 @@ Les bibliothèques statiques SFML pour Windows sont déjà incluses dans le proj
          -DBUILD_SHARED_LIBS=OFF \
          -DSFML_BUILD_EXAMPLES=OFF \
          -DSFML_BUILD_TEST_SUITE=OFF
-   
+
    cmake --build build-static
    ```
 
 4. **Copier les bibliothèques** dans `lib/Windows/`:
+
    ```bash
    mkdir -p /chemin/vers/sample-sfml-project/lib/Windows
    cp build-static/lib/*.a /chemin/vers/sample-sfml-project/lib/Windows/
@@ -156,6 +160,7 @@ Les bibliothèques statiques SFML pour Windows sont déjà incluses dans le proj
 ### Obtenir les Bibliothèques SFML pour macOS
 
 Les bibliothèques macOS sont déjà dans `lib/macOS/`. Elles ont été compilées avec:
+
 ```bash
 cmake -S . -B build-static -G Ninja \
       -DCMAKE_BUILD_TYPE=Release \
@@ -174,4 +179,3 @@ Si vous devez les recompiler, suivez les mêmes étapes que pour Windows en adap
 3. Pour créer `$(NAME)`, make vérifie si tous les fichiers objets `$(OBJ)` existent
 4. Pour chaque fichier `.cpp` qui n'a pas de fichier `.o` correspondant ou qui a été modifié, la règle `%.o: %.cpp` est appliquée
 5. Une fois tous les fichiers objets créés, ils sont liés ensemble pour former l'exécutable final
-
