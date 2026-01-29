@@ -1,42 +1,40 @@
-/******************************************************************************/
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mmoumini  <https://moustoifa.moumini.xyz/> +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/21 12:15:46 by mmoumini          #+#    #+#             */
-/*   Updated: 2026/01/26 11:39:28 by mmoumini         ###   ########.fr       */
-/*                                                                            */
-/******************************************************************************/
+                                                                                                                                                                                                                                                                                                                                                                        
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include "Game.hpp"
-
-
-
+#include "Bird.hpp"
 int main() {
+    std::cout << "Dossier de travail : " << std::filesystem::current_path() << std::endl;
+
     Game game;
     game.start();
-    
-    auto window = sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "SFML Project");
+
+    auto window = sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "Flappy Bird");
     window.setFramerateLimit(144);
-    
-    
-    while (window.isOpen())
-    {
 
-        while (const std::optional event = window.pollEvent())
-        {
+    Bird bird(100.0f, 540.0f, 1080.0f);  // Créer l'oiseau au centre vertical
 
-            if (event->is<sf::Event::Closed>())
-            {
+    while (window.isOpen()) {
+        // Gérer les événements
+        while (const std::optional event = window.pollEvent()) {
+            if (event->is<sf::Event::Closed>()) {
                 window.close();
+            }
+            
+            // Détecter Espace pour sauter
+            if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+                if (keyPressed->code == sf::Keyboard::Key::Space) {
+                    bird.jump();
+                }
             }
         }
 
-        window.clear();
+        bird.update();
         
+        // Dessiner
+        window.clear(sf::Color::Black);
+        bird.draw(window);
         window.display();
     }
     return 0;
