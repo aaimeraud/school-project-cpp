@@ -12,17 +12,18 @@
 
 #include <SFML/Graphics.hpp>
 #include "Game.hpp"
+#include "Bird.hpp"
 
-
-
-int main() {
+int main()
+{
     Game game;
     game.start();
-    
+
     auto window = sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "SFML Project");
     window.setFramerateLimit(144);
-    
-    
+
+    Bird bird(100.0f, 540.0f, 1080.0f);
+
     while (window.isOpen())
     {
 
@@ -33,10 +34,21 @@ int main() {
             {
                 window.close();
             }
+
+            // détecter l'appui sur la barre d'espace
+            if (const auto *keyPressed = event->getIf<sf::Event::KeyPressed>())
+            {
+                if (keyPressed->code == sf::Keyboard::Key::Space)
+                {
+                    bird.jump(); // fait sauter l'oiseau
+                }
+            }
         }
 
-        window.clear();
-        
+        bird.update();
+
+        window.clear(sf::Color::Cyan);
+        bird.draw(window);
         window.display();
     }
     return 0;
