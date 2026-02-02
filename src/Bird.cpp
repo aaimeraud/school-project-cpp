@@ -17,12 +17,12 @@ Bird::Bird(float x, float y, float winHeight)
 
 void Bird::jump()
 {
-    speedY = -10;
+    speedY = -3.5;
 };
 
 void Bird::update()
 {
-    speedY += 0.5f;
+    speedY += 0.10f;
     positionY += speedY;
 
     // Limite (Sol)

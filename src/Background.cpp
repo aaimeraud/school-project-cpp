@@ -25,6 +25,9 @@ Background::Background(float winWidth, float winHeight)
     sprite->setPosition({positionX, positionY});
 }
 
+
+
+
 void Background::draw(sf::RenderWindow &window)
 {
     window.draw(*sprite);

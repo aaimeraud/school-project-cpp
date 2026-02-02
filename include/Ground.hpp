@@ -3,20 +3,26 @@
 
 #include <SFML/Graphics.hpp>
 
-class Background
+class Ground
 {
 private:
-    float positionX;
+    float positionX_1;
+    float positionX_2;
     float positionY;
     float windowWidth;
     float windowHeight;
+    float speed;
     sf::Texture texture;
-    sf::Sprite *sprite;
+    sf::Sprite *sprite1;
+    sf::Sprite *sprite2;
 
 public:
-    Background(float winWidth, float winHeight);
+    Ground(float winWidth, float winHeight);
+
+    void update(float dt); // définit le movement avec delta time
 
     void draw(sf::RenderWindow &window); // Dessine le fond
+    float getY() const;                  // Détecter les collisions
 };
 
 #endif

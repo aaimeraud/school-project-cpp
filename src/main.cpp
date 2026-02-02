@@ -11,27 +11,36 @@
 /******************************************************************************/
 
 #include <SFML/Graphics.hpp>
-#include "Game.hpp"
+
 #include "Bird.hpp"
 #include "Background.hpp"
+#include "Ground.hpp"
+#include "Obstacle.hpp"
 
 int main()
 {
-    Game game;
-    game.start();
 
     // Format iPhone 13 Pro vertical (390 x 844 points)
     const unsigned int windowWidth = 390u;
-    const unsigned int windowHeight = 844u;
+    const unsigned int windowHeight = 800u;
 
-    auto window = sf::RenderWindow(sf::VideoMode({windowWidth, windowHeight}), "Flappy Bird");
+    auto window = sf::RenderWindow(sf::VideoMode({windowWidth, windowHeight}), "Flappy Bird", sf::Style::Titlebar | sf::Style::Close);
     window.setFramerateLimit(144);
 
     Bird bird(windowWidth * 0.2f, windowHeight / 2.0f, static_cast<float>(windowHeight));
     Background background(static_cast<float>(windowWidth), static_cast<float>(windowHeight));
+    Ground ground(static_cast<float>(windowWidth), static_cast<float>(windowHeight));
+    Obstacle obstacle(
+        static_cast<float>(windowWidth), // x position (bord droit)
+        150.0f,                          // taille du gap
+        static_cast<float>(windowHeight),
+        static_cast<float>(windowWidth));
+
+    sf::Clock clock;
 
     while (window.isOpen())
     {
+        float dt = clock.restart().asSeconds();
 
         while (const std::optional event = window.pollEvent())
         {
@@ -52,10 +61,14 @@ int main()
         }
 
         bird.update();
+        ground.update(dt);
+        obstacle.update(dt);
 
         window.clear();
-        background.draw(window); 
-        bird.draw(window);       
+        background.draw(window);
+        bird.draw(window);
+        obstacle.draw(window);
+        ground.draw(window);
         window.display();
     }
     return 0;

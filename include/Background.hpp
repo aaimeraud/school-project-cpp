@@ -10,6 +10,7 @@ private:
     float positionY;
     float windowWidth;
     float windowHeight;
+    
     sf::Texture texture;
     sf::Sprite *sprite;
 
