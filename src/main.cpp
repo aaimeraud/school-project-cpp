@@ -13,16 +13,22 @@
 #include <SFML/Graphics.hpp>
 #include "Game.hpp"
 #include "Bird.hpp"
+#include "Background.hpp"
 
 int main()
 {
     Game game;
     game.start();
 
-    auto window = sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "SFML Project");
+    // Format iPhone 13 Pro vertical (390 x 844 points)
+    const unsigned int windowWidth = 390u;
+    const unsigned int windowHeight = 844u;
+
+    auto window = sf::RenderWindow(sf::VideoMode({windowWidth, windowHeight}), "Flappy Bird");
     window.setFramerateLimit(144);
 
-    Bird bird(100.0f, 540.0f, 1080.0f);
+    Bird bird(windowWidth * 0.2f, windowHeight / 2.0f, static_cast<float>(windowHeight));
+    Background background(static_cast<float>(windowWidth), static_cast<float>(windowHeight));
 
     while (window.isOpen())
     {
@@ -47,8 +53,9 @@ int main()
 
         bird.update();
 
-        window.clear(sf::Color::Cyan);
-        bird.draw(window);
+        window.clear();
+        background.draw(window); 
+        bird.draw(window);       
         window.display();
     }
     return 0;

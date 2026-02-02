@@ -6,10 +6,13 @@ using namespace std;
 Bird::Bird(float x, float y, float winHeight)
     : positionX(x), positionY(y), speedY(0), windowHeight(winHeight)
 {
-    sf::Texture texture;
-    texture.loadFromFile("assets/flappy-bird-assets-master/sprites/bluebird-midflap.png");
-    sf::Sprite sprite;
-    sprite.setTexture(texture);
+
+    if (!texture.loadFromFile("assets/flappy-bird-assets-master/sprites/bluebird-midflap.png"))
+    {
+        cerr << "Erreur: impossible de charger la texture" << endl;
+    }
+    sprite = new sf::Sprite(texture);
+    sprite->setPosition({positionX, positionY});
 }
 
 void Bird::jump()
@@ -35,6 +38,11 @@ void Bird::update()
         positionY = 0.0f;
         speedY = 0;
     }
+    // Mettre à jour la position du sprite
+    sprite->setPosition({positionX, positionY});
 }
 
-void draw(sprite);
+void Bird::draw(sf::RenderWindow &window)
+{
+    window.draw(*sprite);
+}

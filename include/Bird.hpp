@@ -11,7 +11,7 @@ private:
     float speedY;
     float windowHeight;
     sf::Texture texture;
-    sf::Sprite sprite;
+    sf::Sprite *sprite;
 
 public:
     Bird(float x, float y, float winHeight);
