@@ -32,7 +32,7 @@ int main()
     Ground ground(static_cast<float>(windowWidth), static_cast<float>(windowHeight));
     Obstacle obstacle(
         static_cast<float>(windowWidth), // x position (bord droit)
-        150.0f,                          // taille du gap
+        135.0f,                          // taille du gap
         static_cast<float>(windowHeight),
         static_cast<float>(windowWidth));
 
@@ -68,6 +68,7 @@ int main()
         background.draw(window);
         bird.draw(window);
         obstacle.draw(window);
+
         ground.draw(window);
         window.display();
     }

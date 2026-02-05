@@ -3,8 +3,8 @@
 
 using namespace std;
 
-Obstacle::Obstacle(float x, float gap, float winHeight, float winWidth)
-    : positionX(x), gapSize(gap), windowHeight(winHeight), windowWidth(winWidth), speed(150.0f)
+Obstacle::Obstacle(float x, float gap, float winHeight, float winWidth, float obstacleSpacing, int numObstacles)
+    : positionX(x), gapSize(gap), windowHeight(winHeight), windowWidth(winWidth), speed(150.0f), spacing(obstacleSpacing), totalObstacles(numObstacles)
 {
     // Initialiser le générateur aléatoire
     random_device rd;
@@ -27,8 +27,8 @@ Obstacle::Obstacle(float x, float gap, float winHeight, float winWidth)
 
 void Obstacle::reset()
 {
-    // Repositionner à droite de l'écran
-    positionX = windowWidth;
+    // Repositionner à droite : après le dernier obstacle (windowWidth + espacement total)
+    positionX = windowWidth + (spacing * (totalObstacles - 1));
 
     // Gap aléatoire entre 25% et 65% de la hauteur (pour laisser place au sol)
     float minY = windowHeight * 0.25f;
