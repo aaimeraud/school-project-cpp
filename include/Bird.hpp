@@ -21,6 +21,10 @@ public:
     void update(); // Initialisation de la gravité
 
     void draw(sf::RenderWindow &window); // Dessine l'oiseau
+
+    sf::FloatRect getBounds() const;  // Pour les collisions
+    sf::Vector2f getPosition() const; // Position actuelle
+    void reset(float x, float y);     // Réinitialiser l'oiseau
 };
 
 #endif

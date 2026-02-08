@@ -3,8 +3,8 @@
 
 using namespace std;
 
-Obstacle::Obstacle(float x, float gap, float winHeight, float winWidth, float obstacleSpacing, int numObstacles)
-    : positionX(x), gapSize(gap), windowHeight(winHeight), windowWidth(winWidth), speed(150.0f), spacing(obstacleSpacing), totalObstacles(numObstacles)
+Obstacle::Obstacle(float x, float gap, float winHeight, float winWidth)
+    : positionX(x), gapSize(gap), windowHeight(winHeight), windowWidth(winWidth), speed(150.0f), scored(false)
 {
     // Initialiser le générateur aléatoire
     random_device rd;
@@ -21,21 +21,22 @@ Obstacle::Obstacle(float x, float gap, float winHeight, float winWidth, float ob
     // Inverser le tuyau du haut (rotation 180°)
     spriteTop->setScale({1.0f, -1.0f});
 
-    // Position initiale aléatoire du gap
-    reset();
+    // Générer la position Y du gap
+    randomizeGapY();
+    updateSprites();
 }
 
-void Obstacle::reset()
+void Obstacle::randomizeGapY()
 {
-    // Repositionner à droite : après le dernier obstacle (windowWidth + espacement total)
-    positionX = windowWidth + (spacing * (totalObstacles - 1));
-
     // Gap aléatoire entre 25% et 65% de la hauteur (pour laisser place au sol)
     float minY = windowHeight * 0.25f;
     float maxY = windowHeight * 0.65f;
     uniform_real_distribution<float> dist(minY, maxY);
     gapY = dist(rng);
+}
 
+void Obstacle::updateSprites()
+{
     // Dimensions de la texture
     float textureHeight = static_cast<float>(texture.getSize().y);
 
@@ -57,35 +58,27 @@ void Obstacle::reset()
     spriteBottom->setPosition({positionX, bottomPipeY});
 }
 
+void Obstacle::reset(float newX)
+{
+    positionX = newX;
+    scored = false;
+    randomizeGapY();
+    updateSprites();
+}
+
 void Obstacle::update(float dt)
 {
     // Déplacer vers la gauche
     positionX -= speed * dt;
 
-    // Si sorti de l'écran à gauche, repositionner à droite
-    float textureWidth = static_cast<float>(texture.getSize().x);
-    if (positionX + textureWidth < 0)
-    {
-        reset();
-    }
-
-    // Dimensions de la texture
-    float textureHeight = static_cast<float>(texture.getSize().y);
-
-    // Calculer les échelles
-    float topPipeHeight = gapY - gapSize / 2.0f;
-    float scaleTop = topPipeHeight / textureHeight;
-
-    float bottomPipeY = gapY + gapSize / 2.0f;
-    float bottomPipeHeight = windowHeight - bottomPipeY;
-    float scaleBottom = bottomPipeHeight / textureHeight;
-
     // Mettre à jour les positions des sprites
-    spriteTop->setScale({1.0f, -scaleTop});
-    spriteTop->setPosition({positionX, topPipeHeight});
+    updateSprites();
+}
 
-    spriteBottom->setScale({1.0f, scaleBottom});
-    spriteBottom->setPosition({positionX, bottomPipeY});
+bool Obstacle::isOffScreen() const
+{
+    float textureWidth = static_cast<float>(texture.getSize().x);
+    return positionX + textureWidth < 0;
 }
 
 void Obstacle::draw(sf::RenderWindow &window)
@@ -107,4 +100,24 @@ float Obstacle::getGapY() const
 float Obstacle::getGapSize() const
 {
     return gapSize;
+}
+
+sf::FloatRect Obstacle::getTopBounds() const
+{
+    return spriteTop->getGlobalBounds();
+}
+
+sf::FloatRect Obstacle::getBottomBounds() const
+{
+    return spriteBottom->getGlobalBounds();
+}
+
+bool Obstacle::hasScored() const
+{
+    return scored;
+}
+
+void Obstacle::setScored()
+{
+    scored = true;
 }

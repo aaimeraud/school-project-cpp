@@ -46,3 +46,21 @@ void Bird::draw(sf::RenderWindow &window)
 {
     window.draw(*sprite);
 }
+
+sf::FloatRect Bird::getBounds() const
+{
+    return sprite->getGlobalBounds();
+}
+
+sf::Vector2f Bird::getPosition() const
+{
+    return sf::Vector2f(positionX, positionY);
+}
+
+void Bird::reset(float x, float y)
+{
+    positionX = x;
+    positionY = y;
+    speedY = 0.0f;
+    sprite->setPosition({positionX, positionY});
+}

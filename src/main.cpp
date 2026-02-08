@@ -11,11 +11,13 @@
 /******************************************************************************/
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
 #include "Bird.hpp"
 #include "Background.hpp"
 #include "Ground.hpp"
-#include "Obstacle.hpp"
+#include "ObstacleManager.hpp"
+#include "CollisionManager.hpp"
 
 int main()
 {
@@ -23,6 +25,7 @@ int main()
     // Format iPhone 13 Pro vertical (390 x 844 points)
     const unsigned int windowWidth = 390u;
     const unsigned int windowHeight = 800u;
+    const float groundY = windowHeight - 112.0f; // Hauteur du sol
 
     auto window = sf::RenderWindow(sf::VideoMode({windowWidth, windowHeight}), "Flappy Bird", sf::Style::Titlebar | sf::Style::Close);
     window.setFramerateLimit(144);
@@ -30,13 +33,16 @@ int main()
     Bird bird(windowWidth * 0.2f, windowHeight / 2.0f, static_cast<float>(windowHeight));
     Background background(static_cast<float>(windowWidth), static_cast<float>(windowHeight));
     Ground ground(static_cast<float>(windowWidth), static_cast<float>(windowHeight));
-    Obstacle obstacle(
-        static_cast<float>(windowWidth), // x position (bord droit)
-        135.0f,                          // taille du gap
+    ObstacleManager obstacleManager(
+        static_cast<float>(windowWidth),
         static_cast<float>(windowHeight),
-        static_cast<float>(windowWidth));
+        135.0f, // taille du gap
+        250.0f, // espacement entre obstacles
+        3);     // nombre d'obstacles
 
     sf::Clock clock;
+    int score = 0;
+    bool gameOver = false;
 
     while (window.isOpen())
     {
@@ -55,20 +61,60 @@ int main()
             {
                 if (keyPressed->code == sf::Keyboard::Key::Space)
                 {
-                    bird.jump(); // fait sauter l'oiseau
+                    if (gameOver)
+                    {
+                        // Restart the game
+                        bird.reset(windowWidth * 0.2f, windowHeight / 2.0f);
+                        obstacleManager.reset();
+                        score = 0;
+                        gameOver = false;
+                    }
+                    else
+                    {
+                        bird.jump(); // fait sauter l'oiseau
+                    }
                 }
             }
         }
 
-        bird.update();
-        ground.update(dt);
-        obstacle.update(dt);
+        if (!gameOver)
+        {
+            bird.update();
+            ground.update(dt);
+            obstacleManager.update(dt);
+
+            // Vérifier les collisions
+            for (Obstacle *obstacle : obstacleManager.getObstacles())
+            {
+                if (CollisionManager::checkBirdObstacleCollision(bird, *obstacle))
+                {
+                    gameOver = true;
+                    std::cout << "Game Over! Score final: " << score << std::endl;
+                    break;
+                }
+
+                // Vérifier si l'oiseau a passé l'obstacle (score)
+                float pipeWidth = 52.0f; // Largeur approximative du tuyau
+                if (!obstacle->hasScored() && bird.getPosition().x > obstacle->getX() + pipeWidth)
+                {
+                    obstacle->setScored();
+                    score++;
+                    std::cout << "Score: " << score << std::endl;
+                }
+            }
+
+            // Vérifier collision avec le sol
+            if (CollisionManager::checkBirdGroundCollision(bird, groundY))
+            {
+                gameOver = true;
+                std::cout << "Game Over! Score final: " << score << std::endl;
+            }
+        }
 
         window.clear();
         background.draw(window);
         bird.draw(window);
-        obstacle.draw(window);
-
+        obstacleManager.draw(window);
         ground.draw(window);
         window.display();
     }
