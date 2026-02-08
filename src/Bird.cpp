@@ -196,6 +196,33 @@ void Bird::reset(float x, float y)
     sprite->setPosition({positionX, positionY});
 }
 
+void Bird::updateIdle(float deltaTime)
+{
+    // Animation de flottement doux (oscillation sinusoïdale)
+    static float idleTime = 0.0f;
+    idleTime += deltaTime;
+
+    float baseY = windowHeight / 2.0f;
+    float oscillation = std::sin(idleTime * 3.0f) * 8.0f;
+    positionY = baseY + oscillation;
+
+    // Animation des ailes (cycle normal)
+    animationTimer += deltaTime;
+    if (animationTimer >= animationInterval)
+    {
+        animationTimer = 0.0f;
+        currentFrame = (currentFrame + 1) % 3;
+        sprite->setTexture(textures[currentFrame]);
+    }
+
+    // Pas de rotation en mode idle
+    rotation = 0.0f;
+    sprite->setRotation(sf::degrees(0.0f));
+
+    // Mettre à jour la position du sprite
+    sprite->setPosition({positionX, positionY});
+}
+
 void Bird::playHitSound()
 {
     if (hitSound)

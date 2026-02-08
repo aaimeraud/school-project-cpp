@@ -46,13 +46,15 @@ public:
     Bird(float x, float y, float winHeight);
     ~Bird();
 
-    void jump();                        // Commande pour faire sauter l'oiseau
-    void update(float deltaTime);       // Mise à jour avec delta time
+    void jump();                         // Commande pour faire sauter l'oiseau
+    void update(float deltaTime);        // Mise à jour avec delta time
     void draw(sf::RenderWindow &window); // Dessine l'oiseau
 
     sf::FloatRect getBounds() const;  // Pour les collisions
     sf::Vector2f getPosition() const; // Position actuelle
     void reset(float x, float y);     // Réinitialiser l'oiseau
+
+    void updateIdle(float deltaTime); // Animation d'attente (flottement)
 
     // Sons
     void playHitSound();

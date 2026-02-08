@@ -18,6 +18,7 @@
 #include "Ground.hpp"
 #include "ObstacleManager.hpp"
 #include "CollisionManager.hpp"
+#include "UIManager.hpp"
 
 int main()
 {
@@ -39,14 +40,20 @@ int main()
         135.0f, // taille du gap
         250.0f, // espacement entre obstacles
         3);     // nombre d'obstacles
+    UIManager uiManager(static_cast<float>(windowWidth), static_cast<float>(windowHeight));
 
     sf::Clock clock;
     int score = 0;
     bool gameOver = false;
+    bool gameStarted = false;
 
     while (window.isOpen())
     {
         float dt = clock.restart().asSeconds();
+
+        // Limiter deltaTime pour éviter les gros sauts
+        if (dt > 0.05f)
+            dt = 0.05f;
 
         while (const std::optional event = window.pollEvent())
         {
@@ -56,18 +63,29 @@ int main()
                 window.close();
             }
 
-            // détecter l'appui sur la barre d'espace
+            // détecter l'appui sur la barre d'espace ou clic souris
             if (const auto *keyPressed = event->getIf<sf::Event::KeyPressed>())
             {
                 if (keyPressed->code == sf::Keyboard::Key::Space)
                 {
-                    if (gameOver)
+                    if (!gameStarted)
+                    {
+                        // Démarrer le jeu
+                        gameStarted = true;
+                        uiManager.setState(UIManager::GameState::Playing);
+                        bird.jump();
+                    }
+                    else if (gameOver)
                     {
                         // Restart the game
                         bird.reset(windowWidth * 0.2f, windowHeight / 2.0f);
                         obstacleManager.reset();
+                        ground.reset();
                         score = 0;
                         gameOver = false;
+                        gameStarted = true;
+                        uiManager.setScore(0);
+                        uiManager.setState(UIManager::GameState::Playing);
                     }
                     else
                     {
@@ -75,9 +93,40 @@ int main()
                     }
                 }
             }
+
+            // Support du clic souris
+            if (event->is<sf::Event::MouseButtonPressed>())
+            {
+                if (!gameStarted)
+                {
+                    gameStarted = true;
+                    uiManager.setState(UIManager::GameState::Playing);
+                    bird.jump();
+                }
+                else if (gameOver)
+                {
+                    bird.reset(windowWidth * 0.2f, windowHeight / 2.0f);
+                    obstacleManager.reset();
+                    ground.reset();
+                    score = 0;
+                    gameOver = false;
+                    gameStarted = true;
+                    uiManager.setScore(0);
+                    uiManager.setState(UIManager::GameState::Playing);
+                }
+                else
+                {
+                    bird.jump();
+                }
+            }
         }
 
-        if (!gameOver)
+        if (!gameStarted)
+        {
+            // Animation d'attente
+            bird.updateIdle(dt);
+        }
+        else if (!gameOver)
         {
             bird.update(dt);
             ground.update(dt);
@@ -90,6 +139,7 @@ int main()
                 {
                     bird.playHitSound();
                     gameOver = true;
+                    uiManager.setState(UIManager::GameState::GameOver);
                     std::cout << "Game Over! Score final: " << score << std::endl;
                     break;
                 }
@@ -101,6 +151,7 @@ int main()
                     obstacle->setScored();
                     score++;
                     bird.playPointSound();
+                    uiManager.setScore(score);
                     std::cout << "Score: " << score << std::endl;
                 }
             }
@@ -110,15 +161,17 @@ int main()
             {
                 bird.playHitSound();
                 gameOver = true;
+                uiManager.setState(UIManager::GameState::GameOver);
                 std::cout << "Game Over! Score final: " << score << std::endl;
             }
         }
 
         window.clear();
         background.draw(window);
-        bird.draw(window);
         obstacleManager.draw(window);
         ground.draw(window);
+        bird.draw(window);
+        uiManager.draw(window);
         window.display();
     }
     return 0;
