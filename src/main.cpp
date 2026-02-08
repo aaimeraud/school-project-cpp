@@ -79,7 +79,7 @@ int main()
 
         if (!gameOver)
         {
-            bird.update();
+            bird.update(dt);
             ground.update(dt);
             obstacleManager.update(dt);
 
@@ -88,6 +88,7 @@ int main()
             {
                 if (CollisionManager::checkBirdObstacleCollision(bird, *obstacle))
                 {
+                    bird.playHitSound();
                     gameOver = true;
                     std::cout << "Game Over! Score final: " << score << std::endl;
                     break;
@@ -99,6 +100,7 @@ int main()
                 {
                     obstacle->setScored();
                     score++;
+                    bird.playPointSound();
                     std::cout << "Score: " << score << std::endl;
                 }
             }
@@ -106,6 +108,7 @@ int main()
             // Vérifier collision avec le sol
             if (CollisionManager::checkBirdGroundCollision(bird, groundY))
             {
+                bird.playHitSound();
                 gameOver = true;
                 std::cout << "Game Over! Score final: " << score << std::endl;
             }
