@@ -1,3 +1,4 @@
+
 #include "Bird.hpp"
 #include <iostream>
 #include <cmath>
@@ -239,4 +240,5 @@ void Bird::playPointSound()
 {
     if (pointSound)
         pointSound->play();
+
 }

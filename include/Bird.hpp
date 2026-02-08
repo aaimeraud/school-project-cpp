@@ -2,6 +2,7 @@
 #define BIRD_HPP
 
 #include <SFML/Graphics.hpp>
+
 #include <SFML/Audio.hpp>
 #include <array>
 
@@ -60,6 +61,7 @@ public:
     void playHitSound();
     void playDieSound();
     void playPointSound();
+
 };
 
 #endif

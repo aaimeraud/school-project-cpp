@@ -1,17 +1,8 @@
-/******************************************************************************/
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mmoumini  <https://moustoifa.moumini.xyz/> +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/21 12:15:46 by mmoumini          #+#    #+#             */
-/*   Updated: 2026/01/26 11:39:28 by mmoumini         ###   ########.fr       */
-/*                                                                            */
-/******************************************************************************/
+                                                                                                                                                                                                                                                                                                                                                                        
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+
 
 #include "Bird.hpp"
 #include "Background.hpp"
@@ -55,13 +46,15 @@ int main()
         if (dt > 0.05f)
             dt = 0.05f;
 
-        while (const std::optional event = window.pollEvent())
-        {
+    Bird bird(100.0f, 540.0f, 1080.0f);  // Créer l'oiseau au centre vertical
 
-            if (event->is<sf::Event::Closed>())
-            {
+    while (window.isOpen()) {
+        // Gérer les événements
+        while (const std::optional event = window.pollEvent()) {
+            if (event->is<sf::Event::Closed>()) {
                 window.close();
             }
+
 
             // détecter l'appui sur la barre d'espace ou clic souris
             if (const auto *keyPressed = event->getIf<sf::Event::KeyPressed>())
@@ -172,6 +165,7 @@ int main()
         ground.draw(window);
         bird.draw(window);
         uiManager.draw(window);
+
         window.display();
     }
     return 0;
