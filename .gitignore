@@ -55,4 +55,5 @@ vcpkg_installed/
 Testing/
 .cache/
 
+INSTRUCTIONS.md
 *.html

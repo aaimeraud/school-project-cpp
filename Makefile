@@ -15,7 +15,7 @@ UNAME_S := $(shell uname -s)
 # Detect OS and set variables
 ifeq ($(OS),Windows_NT)
     # Windows (MinGW/MSYS2)
-    NAME = monjeu.exe
+    NAME = FlappyBird.exe
     RM = rm -f
     RMDIR = rm -rf
     LIB_DIR = lib/Windows
@@ -32,7 +32,7 @@ ifeq ($(OS),Windows_NT)
                 -lopengl32 -lwinmm -lgdi32 -lws2_32
 else ifeq ($(UNAME_S),Darwin)
     # macOS
-    NAME = monjeu
+    NAME = FlappyBird
     RM = rm -f
     RMDIR = rm -rf
     LIB_DIR = lib/macOS
@@ -48,7 +48,7 @@ else ifeq ($(UNAME_S),Darwin)
                 -framework CoreServices -framework Carbon -framework OpenAL
 else
     # Linux
-    NAME = monjeu
+    NAME = FlappyBird
     RM = rm -f
     RMDIR = rm -rf
     LIB_DIR = lib/linux
@@ -66,7 +66,9 @@ CFLAGS = -Wall -Wextra -std=c++17 -DSFML_STATIC
 INC = -I./include
 LIB_PATH = $(SFML_LIBS)
 
-SRC = src/main.cpp src/Character.cpp src/Game.cpp src/Bird.cpp
+
+SRC = src/main.cpp src/Bird.cpp src/Background.cpp src/Obstacle.cpp src/Ground.cpp src/ObstacleManager.cpp src/CollisionManager.cpp src/UIManager.cpp
+
 OBJ = $(SRC:.cpp=.o)
 
 all: $(NAME)
